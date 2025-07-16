@@ -6,43 +6,77 @@ export default function PlayerDetails() {
   const { tag } = useParams();
   const navigate = useNavigate();
   const [player, setPlayer] = useState(null);
+  const [battles, setBattles] = useState([]);
+  const [cards, setCards] = useState([]);
+  const [upcomingChests, setUpcomingChests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [cardsCollapsed, setCardsCollapsed] = useState(true);
+  const [error, setError] = useState("");
+  const [clanInfo, setClanInfo] = useState(null);
+  const [elixir, setElixir] = useState(0); 
+  
 
   useEffect(() => {
-    const fetchPlayer = async () => {
+    const fetchData = async () => {
       setLoading(true);
       setError("");
       try {
-        const res = await axios.get(`http://localhost:3001/api/player/${tag}`);
-        setPlayer(res.data);
+        const resPlayer = await axios.get(`http://localhost:3001/api/player/${tag}`);
+        const resBattles = await axios.get(`http://localhost:3001/api/player/${tag}/battles`);
+        const resCards = await axios.get("http://localhost:3001/api/cards");
+        const resChests = await axios.get(`http://localhost:3001/api/player/${tag}/chests`);
+
+        setPlayer(resPlayer.data);
+        setBattles(resBattles.data.slice(0, 5));
+        setCards(resCards.data.items);
+        setUpcomingChests(resChests.data.items?.slice(0, 5) || []);
+
+        if (resPlayer.data.clan?.tag) {
+          const clanTag = resPlayer.data.clan.tag.replace('#', '');
+          const resClan = await axios.get(`http://localhost:3001/api/clan/${clanTag}`);
+          setClanInfo(resClan.data);
+        }
       } catch {
         setError("Player not found or API error.");
       } finally {
         setLoading(false);
       }
     };
-    fetchPlayer();
+    fetchData();
   }, [tag]);
+
+  
 
   if (loading) return <p className="text-center mt-5">Loading player data...</p>;
   if (error) return <p className="text-danger text-center mt-5">{error}</p>;
   if (!player) return null;
 
-  // Fix URLs to https
   const safeUrl = (url) => url?.replace(/^http:/, "https:");
 
-  // Clan rank fallback: try clan.rank, clan.clanRank, or blank
-  const clanRank = player.clan?.rank ?? player.clan?.clanRank ?? "";
+  const favoriteCard = player.currentFavouriteCard;
+  const primaryDeck = player.currentDeck || [];
 
-  // Example favorite cards & primary deck data — adjust if API differs
-  // Clash Royale API has "currentDeck" (primary deck) and "favoriteCard" or similar fields
-  const favoriteCard = player.currentFavouriteCard || player.favoriteCard || null; 
-  // currentFavouriteCard is common from some API versions, adjust accordingly
-
-  const primaryDeck = player.currentDeck || player.mainDeck || player.deck || null;
-
+  const getCardElixir = (id) => {
+    const card = cards.find((c) => c.id === id);
+    console.log("Card Found:", card); 
+    return card?.elixirCost ?? 0; 
+  };
+  
+  const deckWithElixir = primaryDeck.map((deckCard) => {
+    const elixir = getCardElixir(deckCard.id);
+    console.log("Deck Card with Elixir:", { ...deckCard, elixir });
+    return { ...deckCard, elixir }; 
+  });
+  
+  const averageElixir = deckWithElixir.length > 0
+    ? (deckWithElixir.reduce((acc, c) => acc + c.elixir, 0) / deckWithElixir.length).toFixed(1)
+    : "N/A"; 
+  
+  console.log("Cards Array:", cards); // Debugging cards array
+  console.log("Primary Deck:", primaryDeck); // Debugging primary deck
+  console.log("Deck with Elixir:", deckWithElixir); // Debugging deck with elixir values
+  console.log("Average Elixir:", averageElixir); // Debugging average elixir calculation
+  
   return (
     <div className="container mt-4 text-light">
       <button className="btn btn-secondary mb-4" onClick={() => navigate(-1)}>
@@ -53,7 +87,7 @@ export default function PlayerDetails() {
         {player.league?.iconUrls?.medium && (
           <img
             src={safeUrl(player.league.iconUrls.medium)}
-            alt="League badge"
+            alt="League"
             style={{ width: 60, height: 60, marginRight: 15 }}
           />
         )}
@@ -77,61 +111,108 @@ export default function PlayerDetails() {
           )}
           <div>
             <h4 className="mb-1">{player.clan.name}</h4>
-            <p className="mb-0 text-muted">
-              Clan Score: {player.clan.clanScore ?? "N/A"} | Rank: {clanRank || "N/A"}
+            <p className="mb-0 text-light">
+              Clan Score: {clanInfo?.clanScore ?? "N/A"} | War Trophies: {clanInfo?.clanWarTrophies ?? "N/A"}
             </p>
-            <p className="mb-0 text-muted">Role: {player.role || "N/A"}</p>
+            <p className="mb-0 text-light">Role: {player.role || "Member"}</p>
           </div>
         </div>
       ) : (
-        <p><em>Not in a clan</em></p>
+        <p><em>No clan</em></p>
       )}
 
       {favoriteCard && (
         <div className="mb-4">
           <h3>Favorite Card</h3>
-          <div className="d-inline-block bg-dark p-3 rounded text-center" style={{width: 120}}>
+          <div className="d-inline-block bg-dark p-3 rounded text-center" style={{ width: 120 }}>
             <img
               src={safeUrl(favoriteCard.iconUrls?.medium || favoriteCard.iconUrls?.small)}
               alt={favoriteCard.name}
-              style={{ width: 80, height: 80, objectFit: "contain" }}
+              className="img-fluid"
             />
             <p className="mt-2 mb-0">{favoriteCard.name}</p>
-            <small>Level: {favoriteCard.level ?? "N/A"}</small>
+            <small>Max Level: {favoriteCard.maxLevel ?? "N/A"}</small>
           </div>
         </div>
       )}
 
-      {primaryDeck && primaryDeck.length > 0 && (
-        <div className="mb-4">
-          <h3>Primary Deck</h3>
-          <div className="d-flex gap-3 flex-wrap">
-            {primaryDeck.map((card) => (
+{deckWithElixir.length > 0 && (
+  <div className="mb-4">
+    <h3>Primary Deck <small className="text-muted">(Avg. Elixir: {averageElixir})</small></h3>
+    <div className="d-flex flex-wrap gap-3">
+      {deckWithElixir.map((card) => (
+        <div
+          key={card.id}
+          className="bg-dark p-2 rounded text-center"
+          style={{ width: 100 }}
+          data-bs-toggle="tooltip"
+          title={`${card.name} (Level ${card.level})`}
+        >
+          <img
+            src={safeUrl(card.iconUrls?.medium || card.iconUrls?.small)}
+            alt={card.name}
+            className="img-fluid"
+          />
+          <p className="mb-0">{card.name}</p>
+          <small>Level: {card.level}</small><br />
+          <small>Elixir: {card.elixir}</small>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
+
+      <div className="mb-4">
+        <h3>Upcoming Chests</h3>
+        {upcomingChests.length > 0 ? (
+          <div className="d-flex gap-2 flex-wrap">
+            {upcomingChests.map((chest, i) => (
               <div
-                key={card.id}
+                key={i}
                 className="bg-dark p-2 rounded text-center"
                 style={{ width: 100 }}
               >
-                <img
-                  src={safeUrl(card.iconUrls?.medium || card.iconUrls?.small)}
-                  alt={card.name}
-                  style={{ width: "100%" }}
-                />
-                <p className="mb-0">{card.name}</p>
-                <small>Level: {card.level ?? "N/A"}</small>
+                <p className="mb-1">{chest.name}</p>
+                <small>In {chest.index} chests</small>
               </div>
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <p>No chest info found.</p>
+        )}
+      </div>
 
-      {/* Collapsible Cards Section */}
-      <div>
+      <div className="mb-4">
+        <h3>Recent Battles</h3>
+        {battles.length === 0 ? (
+          <p>No recent battles found.</p>
+        ) : (
+          <ul className="list-group">
+            {battles.map((battle, index) => {
+              const playerTeam = battle.team[0];
+              const opponent = battle.opponent[0];
+              const result = playerTeam.crowns > opponent.crowns ? "Victory" : playerTeam.crowns === opponent.crowns ? "Draw" : "Defeat";
+              return (
+                <li key={index} className={`list-group-item bg-${result === "Victory" ? "success" : result === "Draw" ? "secondary" : "danger"} text-white`}>
+                  <strong>{result}</strong> — {playerTeam.crowns} : {opponent.crowns} crowns
+                  <div>
+                    <small>Opponent: {opponent.name || "Unknown"} ({opponent.tag || "?"})</small>
+                  </div>
+                  <div>
+                    <small>Type: {battle.type}</small>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
+
+      <div className="mb-4">
         <button
           className="btn btn-outline-warning mb-3"
           onClick={() => setCardsCollapsed(!cardsCollapsed)}
-          aria-expanded={!cardsCollapsed}
-          aria-controls="cardsCollapse"
         >
           {cardsCollapsed ? "Show All Cards" : "Hide All Cards"}
         </button>
@@ -147,11 +228,13 @@ export default function PlayerDetails() {
                 key={card.id}
                 className="bg-dark p-2 rounded text-center"
                 style={{ width: 100 }}
+                data-bs-toggle="tooltip"
+                title={`Level ${card.level} — ${card.name}`}
               >
                 <img
-                  src={safeUrl(card.iconUrls.medium)}
+                  src={safeUrl(card.iconUrls?.medium)}
                   alt={card.name}
-                  style={{ width: "100%" }}
+                  className="img-fluid"
                 />
                 <p className="mb-0">{card.name}</p>
                 <small>Level: {card.level}</small>
