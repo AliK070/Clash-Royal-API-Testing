@@ -28,13 +28,13 @@ The app also displays a grid of all cards available to the player.
 ### Steps to Run the App:
 
 1) Clone the Repository:
-``` git
+``` c#
 git clone https://github.com/your-username/clash-royale-stats-app.git
 cd clash-royale-stats-app
 ```
 2) Install Dependencies:
 
-``` git
+``` c#
 npm install
 ```
 
@@ -44,11 +44,16 @@ npm install
 
 5) Start the Frontend: Run the following command to start the React development server:
 
-``` git
+``` c#
 npm start
 ```
 
 6) Access the App: Open your browser and navigate to:
 
-```http://localhost:3000```
+```
+http://localhost:3000
+```
 
+## Using the app: 
+
+To use the app, you would click on the field that asks for the player tag. From there simply enter the player tag and click the Search button. You wll be led to where the users stats are and you can view details suchas their cards, to upcoming chests, to recent battles. 
