@@ -1,121 +1,164 @@
-/* Reset */
-* {
+/* ==========================
+   Root Variables & Reset
+========================== */
+:root {
+  --color-bg: #121212;
+  --color-surface: #1f1f1f;
+  --color-card: #222;
+  --color-input: #333;
+  --color-input-focus: #444;
+  --color-text: #eee;
+  --color-muted: #aaa;
+  --color-accent: #fbc531;
+  --color-accent-hover: #e6b92c;
+  --shadow-default: 0 4px 15px rgba(0, 0, 0, 0.5);
+  --shadow-inset: inset 0 0 10px #333;
+  --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-/* Body & root fill screen, dark theme */
+/* ==========================
+   Base Styles
+========================== */
 html, body, #root {
   height: 100%;
-  background: #121212;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #eee;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-main);
+  line-height: 1.5;
 }
 
-/* Navbar */
+/* ==========================
+   Navbar
+========================== */
 .navbar {
   position: fixed;
   top: 0;
   width: 100%;
   height: 60px;
-  background: #1f1f1f;
+  background-color: var(--color-surface);
   display: flex;
   align-items: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.7);
-  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  z-index: 100;
 }
 
 .navbar .container {
   max-width: 960px;
   margin: 0 auto;
   padding: 0 20px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .brand {
+  font-size: 1.5rem;
   font-weight: 700;
-  font-size: 1.4rem;
+  color: var(--color-accent);
   text-decoration: none;
-  color: #fbc531;
   user-select: none;
   letter-spacing: 0.05em;
   cursor: default;
 }
 
-/* Main content fills remaining viewport, centers form */
+/* ==========================
+   Main Content Layout
+========================== */
 .main-content {
   height: calc(100vh - 60px);
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  padding: 2rem;
 }
 
-/* Search form styling */
+/* ==========================
+   Search Form
+========================== */
 .search-form {
-  background: #222;
-  padding: 40px 50px;
-  border-radius: 15px;
-  box-shadow:
-    0 4px 15px rgba(0,0,0,0.5),
-    inset 0 0 10px #333;
+  background-color: var(--color-card);
+  padding: 3rem 3.5rem;
+  border-radius: 16px;
+  box-shadow: var(--shadow-default), var(--shadow-inset);
   max-width: 400px;
   width: 100%;
   text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.search-form:hover {
+  transform: scale(1.01);
 }
 
 .title {
-  margin-bottom: 24px;
+  margin-bottom: 1.5rem;
+  font-size: 1.9rem;
   font-weight: 700;
-  font-size: 1.8rem;
-  color: #fbc531;
+  color: var(--color-accent);
 }
 
+/* ==========================
+   Input Field
+========================== */
 .search-form input {
   width: 100%;
-  padding: 14px 18px;
+  padding: 0.875rem 1.125rem;
   border: none;
   border-radius: 10px;
   font-size: 1rem;
-  background: #333;
-  color: #eee;
-  margin-bottom: 20px;
-  transition: background-color 0.3s ease;
+  background-color: var(--color-input);
+  color: var(--color-text);
+  margin-bottom: 1.25rem;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .search-form input::placeholder {
-  color: #aaa;
+  color: var(--color-muted);
 }
 
 .search-form input:focus {
   outline: none;
-  background: #444;
-  box-shadow: 0 0 5px #fbc531;
+  background-color: var(--color-input-focus);
+  box-shadow: 0 0 5px var(--color-accent);
 }
 
+/* ==========================
+   Submit Button
+========================== */
 .search-form button {
   width: 100%;
-  padding: 14px 0;
-  background: #fbc531;
+  padding: 0.875rem 0;
+  background-color: var(--color-accent);
   border: none;
   border-radius: 10px;
+  color: #222;
   font-weight: 700;
   font-size: 1.1rem;
-  color: #222;
   cursor: pointer;
-  transition: background-color 0.3s ease;
   user-select: none;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .search-form button:hover {
-  background: #e6b92c;
+  background-color: var(--color-accent-hover);
+  transform: translateY(-2px);
 }
 
-/* Responsive */
+/* ==========================
+   Responsive
+========================== */
 @media (max-width: 480px) {
   .search-form {
-    padding: 30px 20px;
+    padding: 2rem 1.5rem;
   }
+
   .title {
     font-size: 1.5rem;
   }
