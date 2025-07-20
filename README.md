@@ -29,7 +29,7 @@ The app also displays a grid of all cards available to the player.
 
 1) Clone the Repository:
 ``` c#
-git clone https://github.com/your-username/clash-royale-stats-app.git
+git clone https://github.com/AliK070/clash-royale-stats-app.git
 cd clash-royale-stats-app
 ```
 2) Install Dependencies:
