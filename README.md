@@ -28,13 +28,13 @@ The app also displays a grid of all cards available to the player.
 ### Steps to Run the App:
 
 1) Clone the Repository:
-``` c#
+``` GIT
 git clone https://github.com/AliK070/clash-royale-stats-app.git
 cd clash-royale-stats-app
 ```
 2) Install Dependencies:
 
-``` c#
+```git
 npm install
 ```
 
@@ -44,13 +44,13 @@ npm install
 
 5) Start the Frontend: Run the following command to start the React development server:
 
-``` c#
+```git
 npm start
 ```
 
 6) Access the App: Open your browser and navigate to:
 
-```
+```git
 http://localhost:3000
 ```
 
