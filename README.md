@@ -56,4 +56,6 @@ http://localhost:3000
 
 ## Using the app: 
 
-To use the app, you would click on the field that asks for the player tag. From there simply enter the player tag and click the Search button. You wll be led to where the users stats are and you can view details suchas their cards, to upcoming chests, to recent battles. 
+To use the app, you would click on the field that asks for the player tag. From there simply enter the player tag and click the Search button. You wll be led to where the users stats are and you can view details suchas their cards, to upcoming chests, to recent battles.
+
+Also I hosted the frontend, you'll get to see it in its action and looks, but I have not hosted the backend yet.
