@@ -21,19 +21,19 @@ export default function PlayerDetails() {
       setLoading(true);
       setError("");
       try {
-        const resPlayer = await axios.get(`http://localhost:3001/api/player/${tag}`);
-        const resBattles = await axios.get(`http://localhost:3001/api/player/${tag}/battles`);
-        const resCards = await axios.get("http://localhost:3001/api/cards");
-        const resChests = await axios.get(`http://localhost:3001/api/player/${tag}/chests`);
-
+        const resPlayer = await axios.get(`/api/player?tag=${tag}`);
+        const resBattles = await axios.get(`/api/player/battles?tag=${tag}`);
+        const resCards = await axios.get("/api/cards");
+        const resChests = await axios.get(`/api/player/chests?tag=${tag}`);
+    
         setPlayer(resPlayer.data);
         setBattles(resBattles.data.slice(0, 5));
         setCards(resCards.data.items);
         setUpcomingChests(resChests.data.items?.slice(0, 5) || []);
-
+    
         if (resPlayer.data.clan?.tag) {
           const clanTag = resPlayer.data.clan.tag.replace('#', '');
-          const resClan = await axios.get(`http://localhost:3001/api/clan/${clanTag}`);
+          const resClan = await axios.get(`/api/clan?tag=${clanTag}`);
           setClanInfo(resClan.data);
         }
       } catch {
