@@ -66,5 +66,5 @@ To use the app, you would click on the field that asks for the player tag. From 
 
 Also I hosted the frontend, you'll get to see it in its action and looks, but I have not hosted the backend yet.
 
-[![Heres a demo once you got it running:]([https://i.sstatic.net/Vp2cE.png)](https://youtu.be/vt5fpE0bzSY](https://github.com/user-attachments/assets/d173f698-a0d3-4efa-978d-7c92da556a72))
+[![Heres a demo once you got it running:](https://github.com/user-attachments/assets/d173f698-a0d3-4efa-978d-7c92da556a72)
 
